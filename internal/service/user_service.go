@@ -9,6 +9,7 @@ import (
 
 type UserService interface {
 	Login(input request.LoginRequest) (entity.User, error)
+	VerifyPin(input request.VerifyPinRequest) (entity.User, error)
 	GetById(userId int) (entity.User, error)
 	GetByUuid(uuid string) (entity.User, error)
 }
@@ -22,15 +23,21 @@ func NewUserService(repository repository.UserRepository) *service {
 }
 
 func (s *service) Login(input request.LoginRequest) (entity.User, error) {
-	email := input.Email
-	password := input.Password
-
-	user, err := s.repository.GetByEmail(email)
+	user, err := s.repository.GetByPhoneNumber(input.PhoneNumber)
 	if err != nil {
 		return user, err
 	}
 
-	err = bcrypt.CompareHashAndPassword([]byte(user.Password), []byte(password))
+	return user, nil
+}
+
+func (s *service) VerifyPin(input request.VerifyPinRequest) (entity.User, error) {
+	user, err := s.repository.GetByUuid(input.Uuid)
+	if err != nil {
+		return user, err
+	}
+
+	err = bcrypt.CompareHashAndPassword([]byte(user.Pin), []byte(input.Pin))
 	if err != nil {
 		return user, err
 	}

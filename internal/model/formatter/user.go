@@ -1,6 +1,12 @@
 package formatter
 
-type LoginFormatter struct {
-	Uuid  string `json:"uuid"`
-	Token string `json:"token"`
-}
+type (
+	CheckAccountFormatter struct {
+		Uuid string `json:"uuid"`
+	}
+
+	LoginFormatter struct {
+		Uuid  string `json:"uuid"`
+		Token string `json:"token"`
+	}
+)

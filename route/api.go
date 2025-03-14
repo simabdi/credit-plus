@@ -21,6 +21,7 @@ func Initialize() {
 	app := SetupApp()
 	api := app.Group("/api/v1")
 	api.Post("/auth/login", userHandler.Login)
+	api.Post("/auth/verify-pin", userHandler.VerifyPin)
 	authorized := api
 	authorized.Use(middleware.Middleware(middlewareService, userService))
 	{

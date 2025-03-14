@@ -7,7 +7,8 @@ import (
 )
 
 type UserRepository interface {
-	GetByEmail(email string) (entity.User, error)
+	Store(input entity.User) (entity.User, error)
+	GetByPhoneNumber(phoneNumber string) (entity.User, error)
 	GetById(userId int) (entity.User, error)
 	GetByUuid(uuid string) (entity.User, error)
 }
@@ -24,10 +25,10 @@ func statusActive(db *gorm.DB) *gorm.DB {
 	return db.Where("status = ?", "active")
 }
 
-func (r *repository) GetByEmail(email string) (entity.User, error) {
+func (r *repository) GetByPhoneNumber(phoneNumber string) (entity.User, error) {
 	var user entity.User
 
-	err := r.db.Scopes(statusActive).Where("email = ?", email).First(&user).Error
+	err := r.db.Scopes(statusActive).Where("phone_number = ?", phoneNumber).First(&user).Error
 	r.db.Logger = logger.Default.LogMode(logger.Info)
 	if err != nil {
 		return user, err
@@ -56,4 +57,13 @@ func (r *repository) GetByUuid(uuid string) (entity.User, error) {
 	}
 
 	return user, nil
+}
+
+func (r *repository) Store(input entity.User) (entity.User, error) {
+	err := r.db.Create(&input).Error
+	if err != nil {
+		return input, err
+	}
+
+	return input, nil
 }
