@@ -14,15 +14,15 @@ type UserService interface {
 	GetByUuid(uuid string) (entity.User, error)
 }
 
-type service struct {
+type userService struct {
 	repository repository.UserRepository
 }
 
-func NewUserService(repository repository.UserRepository) *service {
-	return &service{repository}
+func NewUserService(repository repository.UserRepository) *userService {
+	return &userService{repository}
 }
 
-func (s *service) Login(input request.LoginRequest) (entity.User, error) {
+func (s *userService) Login(input request.LoginRequest) (entity.User, error) {
 	user, err := s.repository.GetByPhoneNumber(input.PhoneNumber)
 	if err != nil {
 		return user, err
@@ -31,7 +31,7 @@ func (s *service) Login(input request.LoginRequest) (entity.User, error) {
 	return user, nil
 }
 
-func (s *service) VerifyPin(input request.VerifyPinRequest) (entity.User, error) {
+func (s *userService) VerifyPin(input request.VerifyPinRequest) (entity.User, error) {
 	user, err := s.repository.GetByUuid(input.Uuid)
 	if err != nil {
 		return user, err
@@ -45,7 +45,7 @@ func (s *service) VerifyPin(input request.VerifyPinRequest) (entity.User, error)
 	return user, nil
 }
 
-func (s *service) GetById(userId int) (entity.User, error) {
+func (s *userService) GetById(userId int) (entity.User, error) {
 	user, err := s.repository.GetById(userId)
 	if err != nil {
 		return user, err
@@ -54,7 +54,7 @@ func (s *service) GetById(userId int) (entity.User, error) {
 	return user, nil
 }
 
-func (s *service) GetByUuid(uuid string) (entity.User, error) {
+func (s *userService) GetByUuid(uuid string) (entity.User, error) {
 	user, err := s.repository.GetByUuid(uuid)
 	if err != nil {
 		return user, err

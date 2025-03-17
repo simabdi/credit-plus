@@ -5,6 +5,7 @@ import "time"
 type Consumer struct {
 	ID          uint   `gorm:"primaryKey"`
 	Uuid        string `gorm:"type:varchar(100);unique"`
+	UserId      uint
 	Nik         string `gorm:"type:varchar(16);unique"`
 	FullName    string `gorm:"type:varchar(50)"`
 	LegalName   string `gorm:"type:varchar(50)"`

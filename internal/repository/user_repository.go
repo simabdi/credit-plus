@@ -13,19 +13,19 @@ type UserRepository interface {
 	GetByUuid(uuid string) (entity.User, error)
 }
 
-type repository struct {
+type userRepository struct {
 	db *gorm.DB
 }
 
-func NewUserRepository(db *gorm.DB) *repository {
-	return &repository{db}
+func NewUserRepository(db *gorm.DB) *userRepository {
+	return &userRepository{db}
 }
 
 func statusActive(db *gorm.DB) *gorm.DB {
 	return db.Where("status = ?", "active")
 }
 
-func (r *repository) GetByPhoneNumber(phoneNumber string) (entity.User, error) {
+func (r *userRepository) GetByPhoneNumber(phoneNumber string) (entity.User, error) {
 	var user entity.User
 
 	err := r.db.Scopes(statusActive).Where("phone_number = ?", phoneNumber).First(&user).Error
@@ -37,7 +37,7 @@ func (r *repository) GetByPhoneNumber(phoneNumber string) (entity.User, error) {
 	return user, nil
 }
 
-func (r *repository) GetById(userId int) (entity.User, error) {
+func (r *userRepository) GetById(userId int) (entity.User, error) {
 	var user entity.User
 
 	err := r.db.Where("id = ?", userId).First(&user).Error
@@ -48,7 +48,7 @@ func (r *repository) GetById(userId int) (entity.User, error) {
 	return user, nil
 }
 
-func (r *repository) GetByUuid(uuid string) (entity.User, error) {
+func (r *userRepository) GetByUuid(uuid string) (entity.User, error) {
 	var user entity.User
 
 	err := r.db.Where("uuid = ?", uuid).First(&user).Error
@@ -59,7 +59,7 @@ func (r *repository) GetByUuid(uuid string) (entity.User, error) {
 	return user, nil
 }
 
-func (r *repository) Store(input entity.User) (entity.User, error) {
+func (r *userRepository) Store(input entity.User) (entity.User, error) {
 	err := r.db.Create(&input).Error
 	if err != nil {
 		return input, err

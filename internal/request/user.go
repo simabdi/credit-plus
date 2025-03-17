@@ -7,7 +7,7 @@ type (
 
 	VerifyPinRequest struct {
 		Uuid string `json:"uuid" validate:"required,max=100"`
-		Pin  string `json:"pin" validate:"required,min=6,max=6"`
+		Pin  string `json:"pin" validate:"required,min=6"`
 	}
 )
 

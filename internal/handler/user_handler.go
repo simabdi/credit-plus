@@ -46,16 +46,16 @@ func (h *userHandler) VerifyPin(ctx *fiber.Ctx) error {
 		return ctx.Status(fiber.StatusBadRequest).JSON(JsonResponse)
 	}
 
+	err := exception.Validate.Struct(input)
+	if err != nil {
+		JsonResponse := helper.JsonResponse(http.StatusUnprocessableEntity, "", false, exception.Validation(input), nil)
+		return ctx.Status(fiber.StatusUnprocessableEntity).JSON(JsonResponse)
+	}
+
 	userLogin, err := h.service.VerifyPin(input)
 	if err != nil {
 		JsonResponse := helper.JsonResponse(http.StatusBadRequest, "Pin incorrect.", false, "", nil)
 		return ctx.Status(fiber.StatusBadRequest).JSON(JsonResponse)
-	}
-
-	err = exception.Validate.Struct(input)
-	if err != nil {
-		JsonResponse := helper.JsonResponse(http.StatusUnprocessableEntity, "", false, exception.Validation(input), nil)
-		return ctx.Status(fiber.StatusUnprocessableEntity).JSON(JsonResponse)
 	}
 
 	token, err := h.middlewareService.GenerateToken(userLogin)
