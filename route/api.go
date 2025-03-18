@@ -44,6 +44,7 @@ func Initialize(db *gorm.DB) {
 		transactionGroup := authorized.Group("transactions")
 		{
 			transactionGroup.Post("", transactionHandler.Save)
+			transactionGroup.Post("/verify", transactionHandler.Update)
 		}
 	}
 

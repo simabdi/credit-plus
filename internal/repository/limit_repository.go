@@ -8,7 +8,9 @@ import (
 type LimitRepository interface {
 	GetAll(userId uint) ([]entity.Limit, error)
 	GetByUuid(uuid string) (entity.Limit, error)
+	GetById(id uint) (entity.Limit, error)
 	GetByAmount(amount int) ([]entity.Limit, error)
+	Update(input entity.Limit) (entity.Limit, error)
 }
 
 type limitRepository struct {
@@ -39,6 +41,16 @@ func (r *limitRepository) GetByUuid(uuid string) (entity.Limit, error) {
 	return limit, nil
 }
 
+func (r *limitRepository) GetById(id uint) (entity.Limit, error) {
+	var limit entity.Limit
+	err := r.db.Where("id = ?", id).Find(&limit).Error
+	if err != nil {
+		return entity.Limit{}, err
+	}
+
+	return limit, nil
+}
+
 func (r *limitRepository) GetByAmount(amount int) ([]entity.Limit, error) {
 	var limit []entity.Limit
 	err := r.db.Where("current_amount >= ?", amount).Find(&limit).Error
@@ -47,4 +59,13 @@ func (r *limitRepository) GetByAmount(amount int) ([]entity.Limit, error) {
 	}
 
 	return limit, nil
+}
+
+func (r *limitRepository) Update(input entity.Limit) (entity.Limit, error) {
+	err := r.db.Save(&input).Error
+	if err != nil {
+		return entity.Limit{}, err
+	}
+
+	return input, nil
 }

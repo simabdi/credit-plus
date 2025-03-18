@@ -13,6 +13,7 @@ import (
 
 type TransactionService interface {
 	Store(ctx *fiber.Ctx, input request.TransactionRequest) (entity.Transaction, error)
+	Update(ctx *fiber.Ctx, input request.VerifyOtpRequest) (entity.Transaction, error)
 }
 
 type transactionService struct {
@@ -64,6 +65,7 @@ func (s *transactionService) Store(ctx *fiber.Ctx, input request.TransactionRequ
 		ContractNumber:    helper.InvoiceNumber(),
 		Otr:               input.Otr,
 		AdminFee:          adminFee,
+		LimitId:           limit.ID,
 		InstallmentAmount: limit.Tenor,
 		AmountOfInterest:  float32(AmountOfInterest),
 		AssetName:         input.AssetName,
@@ -83,4 +85,45 @@ func (s *transactionService) Store(ctx *fiber.Ctx, input request.TransactionRequ
 	//Here send otp
 
 	return result, nil
+}
+
+func (s *transactionService) Update(ctx *fiber.Ctx, input request.VerifyOtpRequest) (entity.Transaction, error) {
+	userLogin, err := s.userRepository.GetByUuid(ctx.Locals("uuid").(string))
+	if err != nil {
+		return entity.Transaction{}, err
+	}
+
+	consumer, err := s.consumerRepository.GetByUserId(userLogin.ID)
+	if err != nil {
+		return entity.Transaction{}, err
+	}
+
+	transaction, err := s.transactionRepository.GetByConsumerOtp(consumer.ID, input.Otp)
+	if err != nil {
+		return entity.Transaction{}, err
+	}
+
+	if transaction.ID == 0 {
+		return entity.Transaction{}, errors.New("Unauthorized access")
+	}
+
+	transaction.Status = "Paid"
+
+	err = s.transactionRepository.Update(transaction)
+	if err != nil {
+		return entity.Transaction{}, err
+	}
+
+	consumerLimit, err := s.limitRepository.GetById(transaction.LimitId)
+	if err != nil {
+		return entity.Transaction{}, err
+	}
+
+	consumerLimit.CurrentAmount -= transaction.Otr
+	_, err = s.limitRepository.Update(consumerLimit)
+	if err != nil {
+		return entity.Transaction{}, err
+	}
+
+	return transaction, nil
 }

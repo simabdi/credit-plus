@@ -8,6 +8,7 @@ type Transaction struct {
 	ContractNumber    string    `gorm:"type:varchar(30)"`
 	Otr               int       `gorm:"type:integer(11)"`
 	AdminFee          int       `gorm:"type:integer(11)"`
+	LimitId           uint      `gorm:"index;type:integer(11)"`
 	InstallmentAmount int       `gorm:"type:tinyint(2)"`
 	AmountOfInterest  float32   `gorm:"type:float(4)"`
 	AssetName         string    `gorm:"type:varchar(80)"`
