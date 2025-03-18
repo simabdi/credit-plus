@@ -12,6 +12,8 @@ type Transaction struct {
 	AmountOfInterest  float32   `gorm:"type:float(4)"`
 	AssetName         string    `gorm:"type:varchar(80)"`
 	Platform          string    `gorm:"type:varchar(50)"`
+	Otp               string    `gorm:"type:char(6)"`
+	Status            string    `gorm:"type:varchar(10)"`
 	CreatedAt         time.Time `gorm:"<-:create;type:datetime(0)"`
 	UpdatedAt         time.Time `gorm:"<-:update;type:datetime(0)"`
 }

@@ -7,6 +7,7 @@ import (
 
 func LimitResource(limit entity.Limit) formatter.LimitFormatter {
 	Resource := formatter.LimitFormatter{
+		Uuid:   limit.Uuid,
 		Tenor:  limit.Tenor,
 		Amount: limit.Amount,
 	}
