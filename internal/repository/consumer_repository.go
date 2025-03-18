@@ -19,7 +19,7 @@ func NewConsumerRepository(db *gorm.DB) *consumerRepository {
 
 func (r *consumerRepository) GetByUserId(userId uint) (entity.Consumer, error) {
 	var consumer entity.Consumer
-	err := r.db.Where("user_id = ?", userId).Find(&consumer).Error
+	err := r.db.Where("user_id = ?", userId).First(&consumer).Error
 	if err != nil {
 		return entity.Consumer{}, err
 	}

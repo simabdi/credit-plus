@@ -21,6 +21,11 @@ func Migrate(db *gorm.DB) {
 		db.AutoMigrate(&entity.Limit{})
 	}
 
+	status = db.Migrator().HasTable(&entity.Parameter{})
+	if status == false {
+		db.AutoMigrate(&entity.Parameter{})
+	}
+
 	status = db.Migrator().HasTable(&entity.Transaction{})
 	if status == false {
 		db.AutoMigrate(&entity.Transaction{})

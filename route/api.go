@@ -21,6 +21,13 @@ func Initialize(db *gorm.DB) {
 	limitService := service.NewLimitService(userRepository, limitRepository)
 	limitHandler := handler.NewLimitHandler(limitService)
 
+	consumerRepository := repository.NewConsumerRepository(db)
+	parameterRepository := repository.NewParameterRepository(db)
+
+	transactionRepository := repository.NewTransactionRepository(db)
+	transactionService := service.NewTransactionService(userRepository, consumerRepository, limitRepository, transactionRepository, parameterRepository)
+	transactionHandler := handler.NewTransactionHandler(transactionService)
+
 	app := SetupApp()
 	api := app.Group("/api/v1")
 	api.Post("/auth/login", userHandler.Login)
@@ -32,6 +39,11 @@ func Initialize(db *gorm.DB) {
 		{
 			limitGroup.Get("", limitHandler.CheckAllLimit)
 			limitGroup.Get("/by-amount", limitHandler.CheckLimitByAmount)
+		}
+
+		transactionGroup := authorized.Group("transactions")
+		{
+			transactionGroup.Post("", transactionHandler.Save)
 		}
 	}
 

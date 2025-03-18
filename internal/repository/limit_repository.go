@@ -7,6 +7,7 @@ import (
 
 type LimitRepository interface {
 	GetAll(userId uint) ([]entity.Limit, error)
+	GetByUuid(uuid string) (entity.Limit, error)
 	GetByAmount(amount int) ([]entity.Limit, error)
 }
 
@@ -27,6 +28,17 @@ func (r *limitRepository) GetAll(userId uint) ([]entity.Limit, error) {
 
 	return limit, nil
 }
+
+func (r *limitRepository) GetByUuid(uuid string) (entity.Limit, error) {
+	var limit entity.Limit
+	err := r.db.Where("uuid = ?", uuid).Find(&limit).Error
+	if err != nil {
+		return entity.Limit{}, err
+	}
+
+	return limit, nil
+}
+
 func (r *limitRepository) GetByAmount(amount int) ([]entity.Limit, error) {
 	var limit []entity.Limit
 	err := r.db.Where("current_amount >= ?", amount).Find(&limit).Error
